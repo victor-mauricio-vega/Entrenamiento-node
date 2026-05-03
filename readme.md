@@ -1,46 +1,56 @@
-# Instalar typeScript global
-- npm i typescript -g
+# Instalar herramientas globales
+## Compilador de TypeScript
+- npm install -g typescript
 
-# motor de ejecución y REPL (Read-Eval-Print Loop) para Node.js que permite ejecutar código TypeScript directamente, sin necesidad de compilarlo a JavaScript previamente
-- npm i ts-node -g
+## Ejecutar TypeScript sin compilar
+- npm install -g ts-node
 
-# Instalar nodemon ayudar nuestra aplicacion en ejecuccion 
-- npm i nodemon -g
+## Reinicio automático del servidor en desarrollo
+- npm install -g nodemon
 
-# Iniciar nuestro proyecto con typeScript
-- tsc --init
+# Inicializar el proyecto
 
-# Inicializar nuestro proyecto de node
+## Inicializar proyecto Node.js
 - npm init -y
 
-# Instalar dependencias a utilizar para api rest
-- npm i express
-- npm i cors # comunicarse con diferentes origenes
-- npm i dotenv # para configuracion de nuestras variables de entorno
-- npm i pg # para realizar conexion a nuestra DB postgres
+## Inicializar configuración de TypeScript
+- tsc --init
 
-# Instalar dependencias a utilizar para api rest con sus tipados
-- npm i @types/express
-- npm i @types/cors
-- npm i @types/dotenv
-- npm i @types/pg
+# Dependencias principales
 
-# Generar migracion
+## Dependencias de producción
+- npm install express       # Framework para API REST
+- npm install cors          # Permite solicitudes entre dominios
+- npm install dotenv        # Manejo de variables de entorno
+- npm install pg            # Cliente de PostgreSQL
+
+## Dependencias de desarrollo (tipados)
+- npm install -D @types/express
+- npm install -D @types/cors
+- npm install -D @types/dotenv
+- npm install -D @types/pg
+
+## Validación de datos
+- npm install class-validator class-transformer
+
+# Migraciones (Base de datos)
+
+## Generar migración automáticamente
 - npm run migration:generate --name=<nombre del migracion>
 
-# Generar migracion vacia para realizar modificacion manual
+## Crear migración vacía (manual)
 - npm run migration:create --name=<nombre del migracion>
 
-# Correr migracion creadas
+## Ejecutar migraciones
 - npm run migration:run
 
-#  listar todas las migraciones realizadas
+## Listar migraciones ejecutadas
 - npm run migration:show
 
-# Reversar ultima migracion realizada
+## Revertir última migración
 - npm run migration:revert 
 
-# eliminar tablas y migracciones realizadas
+## Eliminar todas las tablas y migraciones
 - npm run migration:drop
 
 
