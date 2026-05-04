@@ -26,8 +26,7 @@ export class instructorController {
   async createIntructor(req: Request, res: Response) {
     try {
       const result = await service.CreateInstructor(
-        req.body.titulo,
-        req.body.email,
+        req.body
       );
       res.status(201).json(result);
     } catch (error: any) {

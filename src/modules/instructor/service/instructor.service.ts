@@ -1,5 +1,6 @@
 import { AppDataSource } from "../../../config/data-source";
 import { User } from "../../users/entities/user.entity";
+import { CreateInstructorDto } from "../dto/createInstructor.dto";
 import { Instructor } from "../entities/instructor.entity";
 
 export class instructorService {
@@ -51,10 +52,11 @@ export class instructorService {
     }
   }
 
-  async CreateInstructor(email: string, titulo: string) {
+  async CreateInstructor(dto: CreateInstructorDto) {
     try {
+      const { titulo, email } = dto;
       const user = await this.userRepo.findOne({
-        where: { email },
+        where: { email: email },
       });
 
       if (!user) {
@@ -62,7 +64,7 @@ export class instructorService {
       }
 
       const instructorExist = await this.instructorRepo.findOne({
-        where: { user: { id_user: user.id_user} },
+        where: { user: { id_user: user.id_user } },
         relations: ["user"],
       });
 
@@ -76,14 +78,19 @@ export class instructorService {
       });
 
       const saved = await this.instructorRepo.save(instructor);
-      await this.userRepo.save(user);
+
+      const data = {
+        name: instructor.user.name,
+        email: instructor.user.email,
+        title: instructor.titulo,
+      };
 
       return {
         message: "Instructor creado correctamente",
-        data: saved,
+        data,
       };
-    } catch (error) {}
+    } catch (error) {
+      throw new Error(`Error al crear instructor: ${error}`);
+    }
   }
-
-  
 }
