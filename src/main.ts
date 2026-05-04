@@ -1,16 +1,21 @@
-import 'reflect-metadata';
-import 'dotenv/config'
-import app from './app';
-import { AppDataSource } from './config/data-source';
+import "reflect-metadata";
+import cors from "cors";
+import app from "./app";
+import { AppDataSource } from "./config/data-source";
 
-async function main(){
-
-    await AppDataSource.initialize()
+async function bootstrap() {
+  try {
+    await AppDataSource.initialize();
+    console.log("Base de datos conectada");
 
     const port = process.env.PORT || 3000;
-    app.listen(port, () => console.log(`Servidor corriendo en http://localhost:${port}`))
+    app.listen(port, () =>
+      console.log(`Servidor corriendo en http://localhost:${port}`),
+    );
+  } catch (error: any) {
+    console.error("Error al iniciar la aplicación:", error.mesage);
+    process.exit(1);
+  }
 }
 
-main();
-
-
+bootstrap();
