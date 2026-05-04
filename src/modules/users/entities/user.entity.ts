@@ -1,19 +1,36 @@
-import { Entity, PrimaryGeneratedColumn, Column, CreateDateColumn, UpdateDateColumn } from 'typeorm';
+import {
+  Entity,
+  PrimaryGeneratedColumn,
+  Column,
+  CreateDateColumn,
+  UpdateDateColumn,
+  OneToOne,
+} from "typeorm";
+import { Instructor } from "../../instructor/entities/instructor.entity";
 
 @Entity()
 export class User {
-    @PrimaryGeneratedColumn()
-    id: number;
+  @PrimaryGeneratedColumn()
+  id_user: number;
 
-    @Column()
-    name: string;
+  @Column()
+  name: string;
 
-    @Column()
-    email: string;
+  @Column()
+  email: string;
 
-    @CreateDateColumn()
-    createdAt: Date
+  @Column()
+  password: string;
 
-    @UpdateDateColumn()
-    updateAt: Date
+  @Column()
+  identificacion: string;
+
+  @OneToOne(() => Instructor, (instructor) => instructor.user)
+  instructor: Instructor;
+
+  @CreateDateColumn()
+  createdAt: Date;
+
+  @UpdateDateColumn()
+  updateAt: Date;
 }

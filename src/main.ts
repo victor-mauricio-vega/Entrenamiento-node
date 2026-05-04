@@ -1,5 +1,4 @@
 import "reflect-metadata";
-import cors from "cors";
 import app from "./app";
 import { AppDataSource } from "./config/data-source";
 

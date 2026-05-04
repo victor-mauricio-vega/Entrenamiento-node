@@ -1,0 +1,89 @@
+import { AppDataSource } from "../../../config/data-source";
+import { User } from "../../users/entities/user.entity";
+import { Instructor } from "../entities/instructor.entity";
+
+export class instructorService {
+  private readonly instructorRepo = AppDataSource.getRepository(Instructor);
+  private readonly userRepo = AppDataSource.getRepository(User);
+
+  async findInstructor() {
+    try {
+      const instructor = await this.instructorRepo.find({
+        relations: ["user"],
+      });
+
+      if (instructor.length === 0) {
+        return { message: `No hay instructores registrados` };
+      }
+
+      const data = instructor.map((i) => ({
+        id: i.id_instructor,
+        nombre: i.user.name,
+        correo: i.user.email,
+        titulo: i.titulo,
+        registro: i.user.createdAt,
+      }));
+
+      return data;
+    } catch (error) {
+      throw Error(`Error en el servidor ${error}`);
+    }
+  }
+  async findOneInstructor(id: number) {
+    try {
+      const instructor = await this.instructorRepo.findOne({
+        where: { id_instructor: id },
+      });
+
+      if (!instructor) {
+        return { message: `El usuario con id no se encuentra ${id}` };
+      }
+
+      const data = {
+        name: instructor.user.name,
+        email: instructor.user.email,
+        title: instructor.titulo,
+      };
+
+      return data;
+    } catch (error) {
+      throw Error(`Error en el servidor ${error}`);
+    }
+  }
+
+  async CreateInstructor(email: string, titulo: string) {
+    try {
+      const user = await this.userRepo.findOne({
+        where: { email },
+      });
+
+      if (!user) {
+        return { message: `usuario no encontrado` };
+      }
+
+      const instructorExist = await this.instructorRepo.findOne({
+        where: { user: { id_user: user.id_user} },
+        relations: ["user"],
+      });
+
+      if (instructorExist) {
+        return { message: "Este usuario ya es instructor" };
+      }
+
+      const instructor = this.instructorRepo.create({
+        titulo,
+        user: user,
+      });
+
+      const saved = await this.instructorRepo.save(instructor);
+      await this.userRepo.save(user);
+
+      return {
+        message: "Instructor creado correctamente",
+        data: saved,
+      };
+    } catch (error) {}
+  }
+
+  
+}
