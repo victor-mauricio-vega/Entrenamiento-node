@@ -1,10 +1,12 @@
-import { IsEmail, IsString } from "class-validator";
+import { IsEmail, IsNotEmpty, IsString } from "class-validator";
 
 export class CreateInstructorDto {
   @IsString()
+  @IsNotEmpty({ message: "El name es requerido" })
   name: string;
 
-  @IsEmail()
+  @IsEmail({}, { message: "El correo no es válido" })
+  @IsNotEmpty({ message: "El correo es requerido" })
   email: string;
 
   @IsString()
