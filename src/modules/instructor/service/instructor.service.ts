@@ -1,3 +1,4 @@
+import { PaginationDto } from "../../../common/pagination.dto";
 import { AppDataSource } from "../../../config/data-source";
 import { User } from "../../users/entities/user.entity";
 import { CreateInstructorDto } from "../dto/createInstructor.dto";
@@ -7,14 +8,19 @@ export class instructorService {
   private readonly instructorRepo = AppDataSource.getRepository(Instructor);
   private readonly userRepo = AppDataSource.getRepository(User);
 
-  async findInstructor() {
+  async findInstructor(paginationDto: PaginationDto) {
     try {
-      const instructor = await this.instructorRepo.find({
+      const { page, limit } = paginationDto;
+      const [instructor, total] = await this.instructorRepo.findAndCount({
         relations: ["user"],
+        skip: (page - 1) * limit,
+        take: limit,
       });
 
-      if (instructor.length === 0) {
-        return { message: `No hay instructores registrados` };
+      const lastPage = Math.ceil(total / limit);
+
+      if (page > lastPage && total > 0) {
+        return { message: "No hay más páginas" };
       }
 
       const data = instructor.map((i) => ({
@@ -25,7 +31,7 @@ export class instructorService {
         registro: i.user.createdAt,
       }));
 
-      return data;
+      return { data, page, limit, lastPage, total };
     } catch (error) {
       throw Error(`Error en el servidor ${error}`);
     }
@@ -77,12 +83,12 @@ export class instructorService {
         user: user,
       });
 
-      const saved = await this.instructorRepo.save(instructor);
+      const savedInstructor = await this.instructorRepo.save(instructor);
 
       const data = {
-        name: instructor.user.name,
-        email: instructor.user.email,
-        title: instructor.titulo,
+        name: savedInstructor.user.name,
+        email: savedInstructor.user.email,
+        title: savedInstructor.titulo,
       };
 
       return {
