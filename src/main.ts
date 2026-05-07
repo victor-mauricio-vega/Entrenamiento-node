@@ -1,11 +1,14 @@
 import "reflect-metadata";
 import app from "./app";
 import { AppDataSource } from "./config/data-source";
+import { connectRedis } from "./config/redis.config";
 
-async function bootstrap() {
+async function main() {
   try {
     await AppDataSource.initialize();
     console.log("Base de datos conectada");
+
+    await connectRedis();
 
     const port = process.env.PORT || 3000;
     app.listen(port, () =>
@@ -17,4 +20,4 @@ async function bootstrap() {
   }
 }
 
-bootstrap();
+main();

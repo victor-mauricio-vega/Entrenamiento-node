@@ -5,8 +5,8 @@ const service = new userService();
 export class userController {
   async registerUser(req: Request, res: Response) {
     try {
-      const result = await service.registerUser(req.body);
-      res.status(201).json(result);
+      const registerUser = await service.registerUser(req.body);
+      res.status(201).json(registerUser);
     } catch (error:any) {
       res
         .status(400)

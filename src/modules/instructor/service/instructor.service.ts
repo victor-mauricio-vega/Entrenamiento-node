@@ -1,5 +1,6 @@
 import { PaginationDto } from "../../../common/pagination.dto";
 import { AppDataSource } from "../../../config/data-source";
+import clientRedis from "../../../config/redis.config";
 import { User } from "../../users/entities/user.entity";
 import { CreateInstructorDto } from "../dto/createInstructor.dto";
 import { Instructor } from "../entities/instructor.entity";
@@ -11,6 +12,17 @@ export class instructorService {
   async findInstructor(paginationDto: PaginationDto) {
     try {
       const { page, limit } = paginationDto;
+
+      //clave unica
+      const cacheKey = `instructor:${page}:${limit}`;
+
+      // buscar cache
+      const cache = await clientRedis.get(cacheKey);
+
+      if (cache) {
+        return JSON.parse(cache);
+      }
+
       const [instructor, total] = await this.instructorRepo.findAndCount({
         relations: ["user"],
         skip: (page - 1) * limit,
@@ -31,11 +43,20 @@ export class instructorService {
         registro: i.user.createdAt,
       }));
 
-      return { data, page, limit, lastPage, total };
+      const meta = { page, limit, lastPage, total };
+
+      const response = {
+        data,
+        meta,
+      };
+
+      await clientRedis.setEx(cacheKey, 60, JSON.stringify(response));
+      return response;
     } catch (error) {
       throw Error(`Error en el servidor ${error}`);
     }
   }
+
   async findOneInstructor(id: number) {
     try {
       const instructor = await this.instructorRepo.findOne({
